@@ -1,0 +1,41 @@
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.header.Header;
+import org.apache.kafka.common.header.internals.RecordHeader;
+import org.apache.kafka.common.header.Headers;
+import org.apache.kafka.common.header.internals.RecordHeaders;
+
+Properties props = new Properties();
+      props.put("bootstrap.servers", "localhost:9092");
+      props.put("group.id", "my-group");
+      props.put("enable.auto.commit", "true");
+      props.put("auto.commit.interval.ms", "1000");
+      props.put("session.timeout.ms", "30000");
+      props.put("key.deserializer",          
+         "org.apache.kafka.common.serialization.StringDeserializer");
+      props.put("value.deserializer", 
+         "org.apache.kafka.common.serialization.StringDeserializer");
+      org.apache.kafka.clients.consumer.KafkaConsumer<String, String> consumer = new org.apache.kafka.clients.consumer.KafkaConsumer<String, String>(props);
+      
+      consumer.subscribe(Arrays.asList("invoices-service-invoice-database-events"));
+      System.out.println("Subscribed to topic " + "first_topic");
+      int i = 0;
+         
+  long t = System.currentTimeMillis();
+  long end = t + 5000;
+   f = new FileOutputStream(".\\data.csv", true);
+   p = new PrintStream(f);
+   while (System.currentTimeMillis()<end) 
+   {
+       org.apache.kafka.clients.consumer.ConsumerRecords<String, String> records = consumer.poll(100);
+       for (org.apache.kafka.clients.consumer.ConsumerRecord<String, String> record : records)
+      {
+            System.out.println("offset = " + record.offset() +" value = " + record.value( )); 
+          p.println( "offset = " + record.offset() +" value = " + record.value());
+      }
+      consumer.commitSync();   
+    }
+    consumer.close();
+    p.close();
+    f.close();
